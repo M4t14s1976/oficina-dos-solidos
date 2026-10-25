@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2262c9">
+<title>Oficina dos Sólidos — Explorar e Descobrir</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Oficina dos Sólidos">
+<meta name="application-name" content="Oficina dos Sólidos">
+<meta name="description" content="Explora sólidos geométricos em 3D — aplicação educativa de Marco Matias, desenvolvida com ChatGPT (GPT-6, OpenAI).">
+
+<style>
+:root{--bg:#f4f7fb;--paper:#fff;--ink:#18324f;--muted:#5c7087;--line:#d8e3f0;--blue:#2261cf;--pale:#eaf1ff;--shadow:0 4px 20px #304b6c0c;--foot-h:34px}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;height:100dvh;overflow:hidden}
+body{background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,'Segoe UI',Arial,sans-serif;display:grid;grid-template-rows:auto minmax(0,1fr) auto}
+button{font:inherit;cursor:pointer;touch-action:manipulation;color:inherit}button:focus-visible,canvas:focus-visible,input:focus-visible{outline:3px solid #ffb24e;outline-offset:3px}
+header{height:62px;min-height:0;display:flex;align-items:center;border-bottom:1px solid var(--line);background:#fff;padding:9px clamp(16px,3vw,38px);gap:12px}
+.logo{width:39px;height:39px;border-radius:11px;background:#e8f0ff;display:grid;place-items:center;color:var(--blue);flex:0 0 auto}
+.logo svg{width:25px;height:25px}h1{font-size:clamp(18px,2vw,24px);letter-spacing:-.035em;line-height:1.1;margin:0}header p{color:var(--muted);font-size:12px;margin:3px 0 0}.version{font-size:12px;margin-left:auto;color:var(--muted);white-space:nowrap}
+.app-main{min-height:0;overflow:hidden;padding:clamp(12px,2.1vh,22px) clamp(12px,2.4vw,32px);width:100%;display:flex;justify-content:center}
+.screen{width:min(1200px,100%);height:100%;min-height:0;display:flex;flex-direction:column;gap:clamp(10px,1.6vh,18px)}.screen[hidden]{display:none!important}
+.screen-heading{display:flex;align-items:center;gap:15px;flex:0 0 auto;min-height:44px}.screen-heading h2{font-size:clamp(19px,2.3vw,26px);letter-spacing:-.035em;margin:0;line-height:1.2}.screen-heading p{color:var(--muted);margin:4px 0 0;font-size:13px}
+.back{border:1px solid var(--line);background:#fff;border-radius:11px;padding:9px 13px;min-height:42px;font-size:14px;font-weight:720;white-space:nowrap}.back:hover{background:var(--pale)}
+.intro{margin:auto 0 0;text-align:center;flex:0 0 auto}.intro h2{font-size:clamp(23px,3vw,35px);line-height:1.15;letter-spacing:-.04em;margin:0 0 7px}.intro p{color:var(--muted);margin:0;font-size:clamp(13px,1.55vw,16px)}
+.category-grid{flex:0 1 auto;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(12px,2vw,22px);margin:auto 0;align-items:stretch;max-height:370px}
+.category{border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:var(--shadow);padding:clamp(14px,2.3vw,30px);display:flex;flex-direction:column;gap:12px;align-items:stretch;justify-content:center;min-width:0}
+.category-visual{height:clamp(78px,16vh,120px);display:flex;justify-content:center;align-items:center;gap:13px}.category-visual svg{width:min(32%,96px);height:100%;max-width:108px}
+.category h3{text-align:center;font-size:clamp(20px,2.6vw,27px);line-height:1.15;margin:0}.category .category-sub{color:var(--muted);text-align:center;margin:-5px 0 1px;font-size:13px}.category-actions{display:flex;gap:9px;align-items:stretch;justify-content:center}.btn{border-radius:11px;min-height:43px;padding:9px 13px;border:1px solid var(--line);background:#fff;font-weight:700}.btn:hover{border-color:#8fafea;background:#f3f7ff}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.primary:hover{background:#174fb4}.btn.small{font-size:13px}.category-actions .primary{flex:1;max-width:225px}.definition{font-size:14px;line-height:1.55;border:1px solid #b7d2f3;background:#eef5ff;border-radius:12px;padding:13px 17px;color:#234a76;max-width:920px;margin:0 auto auto;flex:0 0 auto}.definition[hidden]{display:none}
+.choose-header{display:flex;align-items:center;justify-content:space-between;gap:12px}.shape-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-auto-rows:minmax(110px,1fr);gap:clamp(8px,1.45vw,14px);overflow-y:auto;min-height:0;padding:2px 3px 8px;align-content:start}
+.shape-card{border-radius:16px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow);padding:8px;min-width:0;min-height:100px;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;text-align:center}
+.shape-card:hover{border-color:#739ee6;background:#f2f7ff}.shape-card svg{width:clamp(42px,6vw,76px);height:clamp(42px,6vw,76px)}.shape-card svg.cuboid-thumb{transform:none}.shape-card strong{font-size:clamp(12px,1.2vw,15px);line-height:1.2}.shape-card span{font-size:11px;color:var(--muted)}
+.explore-title{display:flex;align-items:center;gap:13px;flex:0 0 auto;min-height:42px}.explore-title .titletext{min-width:0}.explore-title h2{margin:0;font-size:clamp(20px,2.2vw,26px);line-height:1.12}.explore-title p{font-size:12px;color:var(--muted);margin:3px 0 0}
+.explore-layout{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(375px,.96fr);gap:clamp(10px,1.5vw,18px);min-height:0;flex:1}
+.viewer{height:100%;min-height:0;position:relative;border:1px solid var(--line);border-radius:16px;background:#f8fbff;overflow:hidden}
+.viewer canvas{width:100%;height:100%;display:block;touch-action:none;cursor:grab}.viewer canvas:active{cursor:grabbing}.viewer-instruction{position:absolute;left:12px;bottom:11px;background:#ffffffee;border:1px solid #dce7f5;border-radius:10px;padding:6px 11px;font-size:12px;color:var(--muted);pointer-events:none}.gl-error{display:none;position:absolute;inset:0;background:#fff0e6;align-items:center;justify-content:center;padding:22px;text-align:center;color:#913e1b;z-index:3}.gl-error.visible{display:flex}
+.side{min-height:0;overflow-y:auto;scrollbar-width:thin;display:flex;flex-direction:column;gap:9px;padding-right:3px}.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:clamp(11px,1.4vh,16px)}.panel h3{font-size:14px;margin:0 0 9px;letter-spacing:-.01em}
+.control-hint{color:var(--muted);font-size:12px;margin:-3px 0 10px}.nav-pad{display:flex;align-items:center;gap:8px}.nav-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));flex:1;gap:7px}.nav-actions .btn{font-size:12px;min-height:36px;padding:7px 6px;line-height:1.2}.nav-actions .btn[aria-pressed="true"]{background:#e0eeff;border-color:#6b9eeb;color:#1854ae}
+.foldrow{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.foldrow .btn{flex:1}.slider-row{display:flex;align-items:center;gap:10px;margin-top:9px}.slider-row input{width:100%;min-width:0;accent-color:var(--blue);cursor:pointer}.slider-row output{font-variant-numeric:tabular-nums;font-weight:800;font-size:12px;color:var(--blue);min-width:33px;text-align:right}.mini-note{color:var(--muted);font-size:11px;line-height:1.35;margin:8px 0 0}.nonnet{background:#f0f6fc;color:#365f85;border-radius:9px;padding:10px;font-size:12px;line-height:1.4}
+.facts-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:8px}.fact{background:#f2f6fc;border-radius:9px;padding:8px 4px;text-align:center}.fact b{font-size:19px;display:block;color:var(--blue);font-variant-numeric:tabular-nums}.fact span{font-size:11px;color:var(--muted);display:block}
+.composition{border-top:1px solid var(--line);padding-top:7px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.comp-tile{background:#f2f6fc;border-radius:9px;padding:8px 7px;text-align:center;min-width:0}.comp-tile b{display:block;color:#2358ad;font-size:14px;line-height:1.2;overflow-wrap:anywhere}.comp-tile span{display:block;margin-top:4px;color:var(--muted);font-size:11px}
+footer{border-top:1px solid var(--line);background:white;color:#4c627c;min-height:var(--foot-h);display:flex;justify-content:center;align-items:center;gap:8px;padding:5px 15px;text-align:center;font-size:clamp(10px,1vw,12px);line-height:1.35}
+footer strong{color:#1c4a81}
+@media(max-width:1040px){.explore-layout{grid-template-columns:minmax(0,1fr) minmax(325px,1fr)}.shape-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.app-main{padding:12px}.side{gap:7px}.panel{padding:10px}.viewer-instruction{font-size:11px}}
+@media(max-height:750px) and (min-width:720px){header{height:54px}.app-main{padding-top:8px;padding-bottom:8px}.screen{gap:7px}.explore-title{min-height:34px}.side{gap:6px}.panel{padding:7px 10px}.panel h3{margin-bottom:5px}.control-hint{margin:0 0 5px}.facts-grid{margin-bottom:6px}.fact{padding:6px 4px}.fact b{font-size:17px}.composition{padding-top:6px;gap:5px}.comp-tile{padding:6px 5px}.mini-note#additionalInfo{display:none}.category-grid{max-height:300px}.category-visual{height:68px}.shape-grid{grid-auto-rows:minmax(90px,1fr)}}
+@media(max-width:719px){.app-main{padding:10px}.category-grid{grid-template-columns:1fr;gap:10px;max-height:none;overflow-y:auto;margin:0}.category{padding:13px}.category-visual{height:65px}.category h3{font-size:20px}.intro{margin:0}.intro h2{font-size:21px}.intro p{font-size:12px}.shape-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:118px}.explore-layout{display:flex;flex-direction:column;overflow-y:auto}.viewer{min-height:270px;height:47vh;flex:0 0 auto}.side{overflow:visible;flex:none}.version{display:none}.explore-title{min-height:35px}footer{font-size:10px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+
+/* OFICINA 1.0 — identidade matemática colorida, sem figuras humanas */
+:root{--bg:#f5f8fc;--ink:#193453;--muted:#596f8a;--line:#d5e3ef;--blue:#2262c9;--pale:#edf5ff;--shadow:0 8px 24px rgba(41,83,130,.07)}
+body{background:#f5f8fc}
+header{position:relative;background:#fff;box-shadow:0 2px 12px #27487009;z-index:2}
+header::before{content:'';height:4px;position:absolute;top:0;left:0;right:0;background:linear-gradient(90deg,#5b9ef1 0 26%,#67c4ae 26% 52%,#f1bf69 52% 73%,#eaa1b7 73% 87%,#ab99df 87%)}
+.logo{border:1px solid #cbdcf9;border-radius:12px;background:linear-gradient(140deg,#dbeaff,#edf5ff);color:#1e65bf}
+.version{color:#4d6c92;background:#f2f7ff;border:1px solid #dbe9f7;border-radius:99px;padding:5px 12px;font-weight:700}
+.app-main{background:radial-gradient(ellipse at 6% 7%,rgba(250,207,118,.16),transparent 33%),radial-gradient(ellipse at 94% 91%,rgba(94,199,173,.16),transparent 33%),#f6f8fc}
+.screen{position:relative;isolation:isolate}
+.screen>*:not(.geometry-art){position:relative;z-index:1}
+.geometry-art{position:absolute;pointer-events:none;z-index:0;opacity:.67;width:clamp(120px,18vw,235px);height:auto;filter:drop-shadow(0 5px 10px #7dabc016)}
+.art-left{left:-8vw;top:3%;transform:rotate(-7deg)}
+.art-right{right:-7vw;bottom:-3%;transform:rotate(7deg)}
+#choice .geometry-art{opacity:.38}
+#choice .art-left{left:-7vw;top:8%}
+#choice .art-right{right:-6vw;bottom:4%}
+.intro h2{color:#17395a;font-weight:800;letter-spacing:-.04em}
+.eyebrow{display:inline-flex;align-items:center;justify-content:center;margin:0 auto 12px;border-radius:999px;font-size:11px;color:#2b6c95;background:linear-gradient(100deg,#e8f4ff,#eaf8f5);border:1px solid #cfe6eb;box-shadow:0 3px 10px #548db00a;font-weight:850;letter-spacing:.105em;padding:6px 15px}
+.category-grid{max-height:375px;gap:clamp(12px,2vw,22px)}
+.category{position:relative;border-radius:20px;border:1px solid #cfe2f2;background:linear-gradient(155deg,#fff 46%,#f0f7ff);box-shadow:0 9px 30px #315d8b14;overflow:hidden;transition:transform .16s,border-color .16s}
+.category:nth-child(2){border-color:#cce8df;background:linear-gradient(155deg,#fff 46%,#effaf6)}
+.category::before{content:'';position:absolute;left:0;top:0;right:0;height:5px;background:linear-gradient(90deg,#5a9ee8,#a9caff)}
+.category:nth-child(2)::before{background:linear-gradient(90deg,#39b9a1,#b5e3cc)}
+.category:hover{transform:translateY(-2px);border-color:#8dbcea}
+.category:nth-child(2):hover{border-color:#81d0b9}
+.category-visual{position:relative;isolation:isolate;gap:18px;height:clamp(85px,17vh,130px)}
+.category-visual::before{content:'';position:absolute;width:clamp(148px,18vw,215px);height:95%;border-radius:50%;background:radial-gradient(ellipse at 45% 45%,#daeaff 0%,#f5faff 65%,transparent 72%);z-index:-1}
+.category:nth-child(2) .category-visual::before{background:radial-gradient(ellipse at 45% 45%,#d4f2e8 0%,#f4fcf8 65%,transparent 72%)}
+.category-visual svg{max-width:108px;filter:drop-shadow(0 7px 4px #285b8d16)}
+.category h3{font-weight:820;color:#1a3c66}
+.category:nth-child(2) h3{color:#216e66}
+.category-sub{font-size:13px}
+.btn,.back{transition:background .15s,border-color .15s,box-shadow .15s;border-radius:11px}
+.btn.primary{background:linear-gradient(180deg,#3179df,#1d59bd);border-color:#2468c5;color:#fff;box-shadow:0 4px 10px #2d74cb21}
+.btn.primary:hover{background:#1958bb}
+.category:nth-child(2) .btn.primary{background:linear-gradient(180deg,#31b39b,#258f81);border-color:#2c9f91;box-shadow:0 4px 10px #278f8121}
+.category:nth-child(2) .btn.primary:hover{background:#207e70}
+.definition{background:#eff8ff;border:1px solid #c1dff2;box-shadow:0 4px 14px #428eb00e;color:#285578}
+.screen-heading h2,.explore-title h2{font-weight:800;color:#18395c}
+.shape-grid{gap:clamp(9px,1.25vw,14px);padding:3px 4px 8px}
+.shape-card{position:relative;border:1px solid #d0e1ef;background:linear-gradient(155deg,#fff,#f5faff);border-radius:15px;box-shadow:0 5px 17px #2b558012;transition:border-color .15s,transform .15s,box-shadow .15s}
+.shape-card:nth-child(5n+2){background:linear-gradient(155deg,#fff,#f2fbf6);border-color:#d0e8df}
+.shape-card:nth-child(5n+3){background:linear-gradient(155deg,#fff,#fff8ef);border-color:#eedfca}
+.shape-card:nth-child(5n+4){background:linear-gradient(155deg,#fff,#faf5ff);border-color:#e5d9f0}
+.shape-card:nth-child(5n+5){background:linear-gradient(155deg,#fff,#fff5f7);border-color:#efdce5}
+.shape-card::before{content:'';position:absolute;top:9px;left:9px;width:6px;height:6px;border-radius:50%;background:#68a7eb;opacity:.85}
+.shape-card:nth-child(5n+2)::before{background:#58bfab}
+.shape-card:nth-child(5n+3)::before{background:#edb05c}
+.shape-card:nth-child(5n+4)::before{background:#a792e1}
+.shape-card:nth-child(5n+5)::before{background:#e5a0b9}
+.shape-card:hover{border-color:#6b9ee4;box-shadow:0 8px 20px #2b558028;transform:translateY(-2px)}
+.shape-card strong{color:#234365}
+.explore-layout{grid-template-columns:minmax(0,1.04fr) minmax(375px,.96fr)}
+.viewer{background:#f9fbfe;border-color:#cedff0}
+.viewer::after{content:'';position:absolute;top:13px;left:13px;width:18px;height:18px;border-top:2px solid #8ab6e6;border-left:2px solid #8ab6e6;opacity:.52;pointer-events:none}
+.viewer-instruction{border-color:#d0e3f3;background:#ffffffeb}
+.side .panel{border-color:#d8e5f0;background:linear-gradient(180deg,#fff,#fcfdff);box-shadow:0 5px 14px #315e8b0b}
+.panel h3{color:#204873;display:flex;align-items:center;gap:8px}
+.panel h3::before{content:'';width:5px;height:16px;flex:0 0 5px;border-radius:5px;background:#64a3e6}
+.panel:nth-child(2) h3::before{background:#52bba6}
+.panel:nth-child(3) h3::before{background:#f0bd68}
+.fact{border:1px solid #d9e7f4;background:#edf5ff}
+.fact:nth-child(2){border-color:#cfece4;background:#effaf6}
+.fact:nth-child(3){border-color:#eadff5;background:#f6f0ff}
+.fact b{color:#1d5cc2}
+.fact:nth-child(2) b{color:#1e907f}
+.fact:nth-child(3) b{color:#8863c6}
+.composition{border-top:1px solid #dce7f1}
+.comp-tile{background:#fff7e9;border:1px solid #f4e3c3}
+.comp-tile:nth-child(2){background:#fdf0f5;border-color:#efdce6}
+.comp-tile b{color:#a46a20}
+.comp-tile:nth-child(2) b{color:#9b5173}
+footer{background:#fff;border-top:1px solid #d4e5f0}
+footer strong{color:#205a98}
+@media(max-height:750px) and (min-width:720px){.category-grid{max-height:300px}.category{padding:13px}.category-visual{height:72px}.geometry-art{opacity:.42}.intro .eyebrow{margin-bottom:8px}}
+@media(max-width:719px){.geometry-art{width:140px;opacity:.30}.category:hover,.shape-card:hover{transform:none}.eyebrow{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.category,.shape-card,.btn,.back{transition:none}}
+
+.install-pwa{border:1px solid #c9ddf5;background:#ecf5ff;border-radius:999px;padding:7px 13px;font-weight:750;color:#225ab2;font-size:12px;margin-left:auto;white-space:nowrap;cursor:pointer}
+.install-pwa:hover{background:#deedff}
+.install-pwa[hidden]{display:none!important}
+.install-pwa:not([hidden])+.version{margin-left:0}
+@media(max-width:719px){.install-pwa{padding:5px 8px;font-size:11px}}
+</style>
+</head>
+<body>
+<header><div class="logo" aria-hidden="true"><svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="m18 3 12 7v15l-12 7L6 25V10l12-7Z"/><path d="m6 10 12 7 12-7M18 17v15"/></svg></div><div><h1>Oficina dos Sólidos</h1><p>Explorar, descobrir e compreender · 4.º ano</p></div><button type="button" id="installPwa" class="install-pwa" hidden>Instalar aplicação</button>
+<span class="version">Aplicação educativa · v1.0</span></header>
+<main class="app-main">
+<section class="screen" id="home" aria-labelledby="homeTitle">
+ <svg class="geometry-art art-left" viewBox="0 0 260 260" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+<circle cx="132" cy="133" r="97" fill="#b7ddff" opacity=".38"/>
+<circle cx="132" cy="133" r="81" fill="none" stroke="#79b7ed" stroke-width="2.4" stroke-dasharray="4 9"/>
+<circle cx="132" cy="133" r="53" fill="none" stroke="#e6ae4d" stroke-width="2.8"/>
+<g stroke="#397fca" stroke-width="3" stroke-linejoin="round">
+<path d="M91 109 133 86 175 109 133 132Z" fill="#b8e1fc"/>
+<path d="M91 109 133 132 133 182 91 157Z" fill="#72baf1"/>
+<path d="M133 132 175 109 175 158 133 182Z" fill="#88d5bd"/>
+</g>
+<path d="M36 174h39M56 154v40" stroke="#ec948a" stroke-width="4" stroke-linecap="round"/>
+<path d="m195 44 23 39h-46z" fill="#f5ca77" stroke="#d89c35" stroke-width="2.6" stroke-linejoin="round"/>
+<circle cx="206" cy="193" r="12" fill="#b4a5ea" opacity=".9"/>
+</svg>
+ <svg class="geometry-art art-right" viewBox="0 0 300 260" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+<circle cx="156" cy="137" r="94" fill="#c9f0e7" opacity=".42"/>
+<path d="M53 190 155 37 250 190Z" fill="#fbe5ae" fill-opacity=".55" stroke="#dfaa48" stroke-width="3" stroke-linejoin="round"/>
+<path d="M53 190 156 145 250 190M156 37v108" stroke="#cc8943" stroke-width="2.6" fill="none" stroke-linejoin="round"/>
+<circle cx="156" cy="145" r="6" fill="#4eacb5"/>
+<path d="M54 217h198M54 209v17M252 209v17" stroke="#69b9d7" stroke-width="2.6" stroke-linecap="round"/>
+<path d="M32 195V48M24 195h16" stroke="#89aad5" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="3 7"/>
+<rect x="212" y="24" width="29" height="29" rx="5" fill="#b9a5ea" opacity=".88"/>
+<path d="M66 48h24M78 36v24" stroke="#ef9c96" stroke-width="4" stroke-linecap="round"/>
+<circle cx="206" cy="218" r="8" fill="#68cbaa"/>
+</svg>
+ <div class="intro"><div class="eyebrow">MATEMÁTICA · GEOMETRIA ESPACIAL</div><h2 id="homeTitle">Que sólidos queres descobrir?</h2><p>Escolhe uma família de sólidos geométricos para começar.</p></div>
+ <div class="category-grid">
+  <article class="category"><div class="category-visual" aria-hidden="true"><svg viewBox="0 0 120 110"><polygon points="14,34 53,20 90,37 53,51" fill="#72b9ee" stroke="#386794" stroke-width="2"/><polygon points="14,34 53,51 53,96 14,77" fill="#4f9be6" stroke="#386794" stroke-width="2"/><polygon points="53,51 90,37 90,79 53,96" fill="#427ac2" stroke="#386794" stroke-width="2"/></svg><svg viewBox="0 0 120 110"><polygon points="16,80 54,10 100,79" fill="#74c5b4" stroke="#2d7d80" stroke-width="2"/><polygon points="16,80 54,10 54,92" fill="#55b4b0" stroke="#2d7d80" stroke-width="2"/><polygon points="54,92 100,79 54,10" fill="#3b9c97" stroke="#2d7d80" stroke-width="2"/></svg></div><h3>Poliedros</h3><p class="category-sub">Prismas, pirâmides e outros</p><div class="category-actions"><button class="btn primary" data-go="poly">Explorar poliedros →</button><button class="btn small" data-info="poly" aria-expanded="false">ⓘ O que são?</button></div></article>
+  <article class="category"><div class="category-visual" aria-hidden="true"><svg viewBox="0 0 120 110"><ellipse cx="60" cy="27" rx="34" ry="14" fill="#79b9ee" stroke="#316f9e" stroke-width="2"/><path d="M26 27V81a34 14 0 0 0 68 0V27" fill="#5c9cdd" stroke="#316f9e" stroke-width="2"/><ellipse cx="60" cy="27" rx="34" ry="14" fill="#9acced" stroke="#316f9e" stroke-width="2"/></svg><svg viewBox="0 0 120 110"><circle cx="60" cy="55" r="41" fill="#85c7b6" stroke="#2b8178" stroke-width="2"/><ellipse cx="60" cy="55" rx="17" ry="41" fill="none" stroke="#4caa9e" stroke-width="2"/><path d="M21 55h78" fill="none" stroke="#4caa9e" stroke-width="2"/></svg></div><h3>Não poliedros</h3><p class="category-sub">Cilindro, cone e esfera</p><div class="category-actions"><button class="btn primary" data-go="curved">Explorar não poliedros →</button><button class="btn small" data-info="curved" aria-expanded="false">ⓘ O que são?</button></div></article>
+ </div>
+ <div id="definition" class="definition" role="status" hidden></div>
+</section>
+<section class="screen" id="choice" aria-labelledby="choiceTitle" hidden>
+ <svg class="geometry-art art-left" viewBox="0 0 260 260" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+<circle cx="132" cy="133" r="97" fill="#b7ddff" opacity=".38"/>
+<circle cx="132" cy="133" r="81" fill="none" stroke="#79b7ed" stroke-width="2.4" stroke-dasharray="4 9"/>
+<circle cx="132" cy="133" r="53" fill="none" stroke="#e6ae4d" stroke-width="2.8"/>
+<g stroke="#397fca" stroke-width="3" stroke-linejoin="round">
+<path d="M91 109 133 86 175 109 133 132Z" fill="#b8e1fc"/>
+<path d="M91 109 133 132 133 182 91 157Z" fill="#72baf1"/>
+<path d="M133 132 175 109 175 158 133 182Z" fill="#88d5bd"/>
+</g>
+<path d="M36 174h39M56 154v40" stroke="#ec948a" stroke-width="4" stroke-linecap="round"/>
+<path d="m195 44 23 39h-46z" fill="#f5ca77" stroke="#d89c35" stroke-width="2.6" stroke-linejoin="round"/>
+<circle cx="206" cy="193" r="12" fill="#b4a5ea" opacity=".9"/>
+</svg>
+ <svg class="geometry-art art-right" viewBox="0 0 300 260" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+<circle cx="156" cy="137" r="94" fill="#c9f0e7" opacity=".42"/>
+<path d="M53 190 155 37 250 190Z" fill="#fbe5ae" fill-opacity=".55" stroke="#dfaa48" stroke-width="3" stroke-linejoin="round"/>
+<path d="M53 190 156 145 250 190M156 37v108" stroke="#cc8943" stroke-width="2.6" fill="none" stroke-linejoin="round"/>
+<circle cx="156" cy="145" r="6" fill="#4eacb5"/>
+<path d="M54 217h198M54 209v17M252 209v17" stroke="#69b9d7" stroke-width="2.6" stroke-linecap="round"/>
+<path d="M32 195V48M24 195h16" stroke="#89aad5" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="3 7"/>
+<rect x="212" y="24" width="29" height="29" rx="5" fill="#b9a5ea" opacity=".88"/>
+<path d="M66 48h24M78 36v24" stroke="#ef9c96" stroke-width="4" stroke-linecap="round"/>
+<circle cx="206" cy="218" r="8" fill="#68cbaa"/>
+</svg>
+ <div class="screen-heading"><button class="back" id="backHome">← Voltar</button><div><h2 id="choiceTitle">Escolhe um sólido</h2><p id="choiceDesc">Toca numa figura para a explorar.</p></div></div>
+ <div class="shape-grid" id="shapeGrid" aria-label="Sólidos da categoria escolhida"></div>
+</section>
+<section class="screen" id="explore" aria-labelledby="solidTitle" hidden>
+ <div class="explore-title"><button class="back" id="backChoice">← Voltar aos sólidos</button><div class="titletext"><h2 id="solidTitle">Cubo</h2><p id="solidFamily">Poliedro · Prisma</p></div></div>
+ <div class="explore-layout">
+  <div class="viewer"><canvas id="scene" aria-label="Sólido tridimensional; arrasta com o rato para o rodar" tabindex="0"></canvas><div class="viewer-instruction">↔ Arrasta com o rato para rodar</div><div id="noGL" class="gl-error" role="alert">Não foi possível iniciar o WebGL. Experimenta abrir no Chrome ou Edge com aceleração gráfica ativa.</div></div>
+  <aside class="side">
+   <section class="panel"><h3>Explorar o sólido</h3><p class="control-hint">Arrasta o sólido com o rato para observar todos os lados.</p><div class="nav-pad"><div class="nav-actions"><button class="btn" id="reset">↺ Vista inicial</button><button class="btn" id="spin" aria-pressed="false">⟳ Rodar sozinho</button><button class="btn" id="transparent" aria-pressed="false">◐ Transparência</button></div></div></section>
+   <section class="panel"><h3 id="foldTitle">Planificação</h3><div id="foldUi"><div class="foldrow"><button class="btn primary" id="foldButton">Abrir planificação</button></div><div class="slider-row"><input id="fold" type="range" min="0" max="100" value="0" aria-label="Grau de abertura da planificação"><output id="percentage">0%</output></div><p class="mini-note" id="foldNote">Abre o sólido e observa como as faces estão ligadas.</p></div><div class="nonnet" id="noNet" hidden>A esfera não tem uma planificação plana exata: uma superfície esférica não se consegue abrir num plano sem deformar.</div></section>
+   <section class="panel"><h3>Características</h3><div class="facts-grid"><div class="fact"><b id="faces">6</b><span id="facesLabel">Faces</span></div><div class="fact"><b id="edges">12</b><span id="edgesLabel">Arestas</span></div><div class="fact"><b id="vertices">8</b><span>Vértices</span></div></div><div class="composition"><div class="comp-tile"><b id="bases">2 quadrados</b><span>Bases</span></div><div class="comp-tile"><b id="lateral">4 quadrados</b><span id="lateralLabel">Faces laterais</span></div></div><p class="mini-note" id="additionalInfo"></p></section>
+  </aside>
+ </div>
+</section>
+</main>
+<footer><span>© 2026 · Conceção e autoria: <strong id="authorName">Marco Matias</strong> · Desenvolvido com <strong>ChatGPT (GPT-6, OpenAI)</strong> · Aplicação v<strong>1.0</strong></span></footer>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const canvas=$('scene'),slider=$('fold');
+const V={add:(a,b)=>a.map((v,i)=>v+b[i]),sub:(a,b)=>a.map((v,i)=>v-b[i]),mul:(a,s)=>a.map(v=>v*s),dot:(a,b)=>a.reduce((v,x,i)=>v+x*b[i],0),cross:(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],norm:a=>{const n=Math.hypot(...a)||1;return a.map(v=>v/n)},mid:(a,b)=>a.map((v,i)=>(v+b[i])/2)};
+// Um gerador matemático por família: cada face partilha vértices e dobradiças reais.
+const BOX_COLORS=['#5099ea','#ea9a57','#56bba4','#a596e9','#e47f8b','#efc360'];
+const PRISM_COLORS=['#edab64','#72a9e8','#84cbb7','#ad9ee8','#f1be77','#db8ca0','#78bbd7','#a7c977'];
+const PYRAMID_COLORS=['#72b8e8','#6cc3aa','#f1b76a','#ae9cea','#e58ea4','#91c9b6','#eccf81'];
+function boxSource(name,w,d,h,summary,description){const x=w/2,y=d/2,vertices=[[-x,-y,0],[x,-y,0],[x,y,0],[-x,y,0],[-x,-y,h],[x,-y,h],[x,y,h],[-x,y,h]];
+ return{name,family:'prism',vertices,faces:[{ids:[0,3,2,1],parent:-1},{ids:[0,1,5,4],parent:0,hinge:[0,1]},{ids:[1,2,6,5],parent:0,hinge:[1,2]},{ids:[2,3,7,6],parent:0,hinge:[2,3]},{ids:[3,0,4,7],parent:0,hinge:[3,0]},{ids:[4,5,6,7],parent:3,hinge:[7,6]}],colors:BOX_COLORS,base:summary,info:description};}
+function polygon(n){const radius=n===3?1.20:1.13;return Array.from({length:n},(_,i)=>{const t=-Math.PI/n+2*Math.PI*i/n;return[radius*Math.cos(t),radius*Math.sin(t)];});}
+function prismSource(n,label){const outline=polygon(n),height=(n===4?2.35:1.85),vertices=outline.map(([x,y])=>[x,y,0]).concat(outline.map(([x,y])=>[x,y,height]));
+ const faces=Array.from({length:n},(_,i)=>({ids:[i,(i+1)%n,(i+1)%n+n,i+n],parent:i===0?-1:i-1,...(i?{hinge:[i,i+n]}:{})}));
+ faces.push({ids:Array.from({length:n},(_,i)=>n-1-i),parent:0,hinge:[1,0]});
+ faces.push({ids:Array.from({length:n},(_,i)=>i+n),parent:0,hinge:[n,n+1]});
+ const kind={3:'triangulares',4:'quadradas',5:'pentagonais',6:'hexagonais'}[n];
+ return{name:label,family:'prism',vertices,faces,colors:faces.map((_,i)=>PRISM_COLORS[i%PRISM_COLORS.length]),base:'2 bases '+kind,info:'Este prisma tem '+n+' faces laterais retangulares e duas bases '+kind+'. Abre-o para descobrir a sua planificação.'};}
+function pyramidSource(n,label){const outline=polygon(n),height=n===3?1.8:1.92,vertices=outline.map(([x,y])=>[x,y,0]).concat([[0,0,height]]);
+ const faces=[{ids:Array.from({length:n},(_,i)=>n-1-i),parent:-1}];
+ for(let i=0;i<n;i++)faces.push({ids:[i,(i+1)%n,n],parent:0,hinge:[i,(i+1)%n]});
+ const baseName={3:'triangular',4:'quadrada',5:'pentagonal',6:'hexagonal'}[n];
+ return{name:label,family:'pyramid',vertices,faces,colors:faces.map((_,i)=>PYRAMID_COLORS[i%PYRAMID_COLORS.length]),base:'1 base '+baseName,info:'Esta pirâmide tem uma base '+baseName+' e '+n+' faces laterais triangulares que se encontram num vértice.'};}
+const SOURCE={
+ cube:boxSource('Cubo',2,2,2,'6 faces quadradas','O cubo tem seis faces quadradas. Observa como se abrem e voltam a unir.'),
+ cuboid:boxSource('Paralelepípedo retângulo',3.35,1.48,2.05,'6 faces retangulares','Observa as faces retangulares. O paralelepípedo retângulo também é um prisma quadrangular.'),
+ prism3:prismSource(3,'Prisma triangular'),
+ prism4:prismSource(4,'Prisma quadrangular'),
+ prism5:prismSource(5,'Prisma pentagonal'),
+ prism6:prismSource(6,'Prisma hexagonal'),
+ pyramid3:pyramidSource(3,'Pirâmide triangular'),
+ pyramid4:pyramidSource(4,'Pirâmide quadrangular'),
+ pyramid5:pyramidSource(5,'Pirâmide pentagonal'),
+ pyramid6:pyramidSource(6,'Pirâmide hexagonal')
+};
+function prepare(key){const src=SOURCE[key],p=src.vertices,f0=src.faces[0].ids;
+ const origin=p[f0[0]],ex=V.norm(V.sub(p[f0[1]],origin)),ez=V.norm(V.cross(V.sub(p[f0[1]],origin),V.sub(p[f0[2]],origin))),ey=V.norm(V.cross(ez,ex));
+ const basis=p.map(q=>{const r=V.sub(q,origin);return[V.dot(r,ex),V.dot(r,ey),V.dot(r,ez)]});
+ const rootCenter=f0.reduce((acc,id)=>V.add(acc,basis[id]),[0,0,0]).map(x=>x/f0.length);
+ const vertices=basis.map(q=>V.sub(q,rootCenter));
+ const faces=src.faces.map((f,i)=>{const a=vertices[f.ids[0]],b=vertices[f.ids[1]],c=vertices[f.ids[2]];const normal=V.norm(V.cross(V.sub(b,a),V.sub(c,a)));return{...f,index:i,normal,color:src.colors[i]}});
+ for(const f of faces){if(f.parent<0){f.angle=0;continue;}const par=faces[f.parent],h0=vertices[f.hinge[0]],h1=vertices[f.hinge[1]],axis=V.norm(V.sub(h1,h0));const dot=Math.max(-1,Math.min(1,V.dot(f.normal,par.normal))),theta=Math.atan2(V.dot(axis,V.cross(f.normal,par.normal)),dot);f.angle=theta;}
+ return{...src,key,vertices,faces,edges:new Set(faces.flatMap(f=>f.ids.map((v,i)=>[v,f.ids[(i+1)%f.ids.length]].sort((a,b)=>a-b).join('-')))).size};
+}
+const ORDER=Object.keys(SOURCE);const models=Object.fromEntries(ORDER.map(key=>[key,prepare(key)]));
+function rotateAbout(p,a,b,angle){const u=V.norm(V.sub(b,a)),x=V.sub(p,a),c=Math.cos(angle),s=Math.sin(angle);return V.add(a,V.add(V.add(V.mul(x,c),V.mul(V.cross(u,x),s)),V.mul(u,V.dot(u,x)*(1-c))));}
+function posePoint(model,faceIdx,p,open){let curr=faceIdx,q=p;while(model.faces[curr].parent>=0){const f=model.faces[curr],a=model.vertices[f.hinge[0]],b=model.vertices[f.hinge[1]];q=rotateAbout(q,a,b,f.angle*open);curr=f.parent;}return q;}
+function geometry(model,open){return model.faces.map(f=>{const points=f.ids.map(id=>posePoint(model,f.index,model.vertices[id],open));const normal=V.norm(V.cross(V.sub(points[1],points[0]),V.sub(points[2],points[0])));return{points,normal,color:f.color,index:f.index}});}
+
+let gl,program,posBuffer,lineBuffer,loc={},webglError=false;
+try{gl=canvas.getContext('webgl',{alpha:false,antialias:true,depth:true})||canvas.getContext('experimental-webgl',{alpha:false,antialias:true,depth:true});if(!gl)throw Error('WebGL indisponível');
+const vs=`attribute vec3 aPosition;attribute vec3 aColor;attribute vec3 aNormal;uniform mat4 uProjection;varying vec3 vColor;varying float vLight;void main(){gl_Position=uProjection*vec4(aPosition,1.0);vColor=aColor;vec3 light=normalize(vec3(0.35,0.65,0.85));vLight=0.83+0.17*abs(dot(normalize(aNormal),light));}`;
+const fs=`precision mediump float;varying vec3 vColor;varying float vLight;uniform float uOutline;uniform float uAlpha;void main(){vec3 col=mix(vColor*vLight,vec3(0.13,0.23,0.36),uOutline);gl_FragColor=vec4(col,uAlpha);}`;
+function compile(kind,code){const s=gl.createShader(kind);gl.shaderSource(s,code);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;}
+program=gl.createProgram();gl.attachShader(program,compile(gl.VERTEX_SHADER,vs));gl.attachShader(program,compile(gl.FRAGMENT_SHADER,fs));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);
+loc.position=gl.getAttribLocation(program,'aPosition');loc.color=gl.getAttribLocation(program,'aColor');loc.normal=gl.getAttribLocation(program,'aNormal');loc.projection=gl.getUniformLocation(program,'uProjection');loc.outline=gl.getUniformLocation(program,'uOutline');loc.alpha=gl.getUniformLocation(program,'uAlpha');
+posBuffer=gl.createBuffer();lineBuffer=gl.createBuffer();gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.disable(gl.CULL_FACE);
+}catch(e){console.error(e);webglError=true;$('noGL').classList.add('visible');}
+
+
+// Sólidos não poliedros (malhas triangulares), com desenvolvimento exato do cilindro e cone.
+const CURVED={
+ cylinder:{name:'Cilindro',family:'curved',kind:'cylinder',base:'2 círculos',side:'1 superfície lateral curva',faces:3,edges:2,vertices:0,description:'Tem duas bases circulares e uma superfície lateral curva. As duas arestas circulares são curvas.'},
+ cone:{name:'Cone',family:'curved',kind:'cone',base:'1 círculo',side:'1 superfície lateral curva',faces:2,edges:1,vertices:1,description:'Tem uma base circular, uma superfície lateral curva e um vértice.'},
+ sphere:{name:'Esfera',family:'curved',kind:'sphere',base:'Não tem',side:'1 superfície curva',faces:1,edges:0,vertices:0,description:'Não tem bases, arestas ou vértices. Toda a sua superfície é curva.'}
+};
+const ALL_KEYS=[...ORDER,...Object.keys(CURVED)];
+const CURVED_COLORS={cylinder:['#4d92da','#7ebeea','#55ae9c'],cone:['#e8aa69','#75bdb4'],sphere:['#70a6dc','#94c3f1']};
+const PALETTES={};for(const [key,m] of Object.entries(models))PALETTES[key]=m.colors.map(hex=>[1,3,5].map(p=>parseInt(hex.slice(p,p+2),16)/255));
+for(const [key,list] of Object.entries(CURVED_COLORS))PALETTES[key]=list.map(hex=>[1,3,5].map(p=>parseInt(hex.slice(p,p+2),16)/255));
+const CAMERA={...Object.fromEntries(ORDER.map(key=>[key,models[key].family==='pyramid'?[1.68,-.68]:(key==='prism3'?[.8,-.95]:key.startsWith('prism')?[1.24,-.57]:[.58,-.60])])),cylinder:[.49,-.55],cone:[.54,-.45],sphere:[.32,-.45]};CAMERA.cuboid=[.48,-.92];
+const OPEN_CAMERA={cylinder:[Math.PI/2,0]};
+const state={key:'cube',family:'poly',open:0,rx:.58,ry:-.60,transparent:false,spin:false,tween:null,viewTween:null};
+const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+let currentScreen='home';
+function show(id){currentScreen=id;for(const scr of document.querySelectorAll('.screen'))scr.hidden=scr.id!==id;document.activeElement?.blur?.();}
+function setFamily(kind){state.family=kind;$('choiceTitle').textContent=kind==='poly'?'Escolhe um poliedro':'Escolhe um não poliedro';$('choiceDesc').textContent='Seleciona um sólido para observar e descobrir as suas características.';drawGrid();show('choice');}
+function descriptionFor(key){if(CURVED[key])return CURVED[key].description;let m=models[key];return m.info;}
+function compFor(key){if(CURVED[key])return CURVED[key];let m=models[key];if(key==='cube')return {base:'2 quadrados',side:'4 quadrados',faces:m.faces.length,edges:m.edges,vertices:m.vertices.length};if(key==='cuboid')return {base:'2 retângulos',side:'4 retângulos',faces:m.faces.length,edges:m.edges,vertices:m.vertices.length};if(key.startsWith('prism')){const n=+key.slice(-1),plural={3:'triângulos',4:'quadrados',5:'pentágonos',6:'hexágonos'};return {base:'2 '+plural[n],side:n+' retângulos',faces:m.faces.length,edges:m.edges,vertices:m.vertices.length};}const n=+key.slice(-1),singular={3:'triângulo',4:'quadrado',5:'pentágono',6:'hexágono'};return{base:'1 '+singular[n],side:n+' triângulos',faces:m.faces.length,edges:m.edges,vertices:m.vertices.length};}
+function orbit(p,rx,ry){const c1=Math.cos(rx),s1=Math.sin(rx),c2=Math.cos(ry),s2=Math.sin(ry);const yy=p[1]*c1-p[2]*s1,zz=p[1]*s1+p[2]*c1;return[p[0]*c2+zz*s2,yy,-p[0]*s2+zz*c2];}
+// Miniaturas SVG resultam da geometria real; não se cria um contexto WebGL para cada cartão.
+function modelThumbnail(key){if(CURVED[key]){
+ if(key==='sphere')return '<svg viewBox="0 0 64 64" aria-hidden="true"><defs><radialGradient id="sgrad"><stop stop-color="#c2e0fc"/><stop offset="1" stop-color="#448bc9"/></radialGradient></defs><circle cx="32" cy="32" r="24" fill="url(#sgrad)" stroke="#386794" stroke-width="1.7"/></svg>';
+ if(key==='cylinder')return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M13 19V47c0 9 38 9 38 0V19" fill="#5398d5" stroke="#365e86" stroke-width="1.5"/><ellipse cx="32" cy="19" rx="19" ry="7.5" fill="#a0d0f2" stroke="#365e86" stroke-width="1.5"/></svg>';
+ return '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6 53 50Q32 66 11 50Z" fill="#e9b270" stroke="#97673e" stroke-width="1.6"/><ellipse cx="32" cy="50" rx="21" ry="8" fill="#f5c787" stroke="#97673e" stroke-width="1.6"/></svg>';
+}
+ if(key==='cuboid')return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 74" aria-hidden="true"><polygon points="11,30 67,30 88,17 32,17" fill="#6dc0ae" stroke="#365476" stroke-width="2" stroke-linejoin="round"/><polygon points="11,30 67,30 67,57 11,57" fill="#5099ea" stroke="#365476" stroke-width="2" stroke-linejoin="round"/><polygon points="67,30 88,17 88,44 67,57" fill="#a596e9" stroke="#365476" stroke-width="2" stroke-linejoin="round"/></svg>';
+ const model=models[key],[rx,ry]=CAMERA[key],geo=geometry(model,0);
+ const ps=geo.flatMap(f=>f.points),mi=[Infinity,Infinity,Infinity],ma=[-Infinity,-Infinity,-Infinity];for(const p of ps)for(let a=0;a<3;a++){mi[a]=Math.min(mi[a],p[a]);ma[a]=Math.max(ma[a],p[a]);}
+ const centre=V.mid(mi,ma),depth=9,project=p=>{const q=orbit(V.sub(p,centre),rx,ry),f=depth/(depth-q[2]);return[q[0]*f,-q[1]*f,q[2]];};
+ const faces=geo.map(f=>({ps:f.points.map(project),color:f.color}));const all=faces.flatMap(f=>f.ps),minX=Math.min(...all.map(p=>p[0])),maxX=Math.max(...all.map(p=>p[0])),minY=Math.min(...all.map(p=>p[1])),maxY=Math.max(...all.map(p=>p[1]));
+ const scale=52/Math.max(maxX-minX,maxY-minY,.001),cx=(minX+maxX)/2,cy=(minY+maxY)/2;
+ faces.sort((a,b)=>a.ps.reduce((s,p)=>s+p[2],0)/a.ps.length-b.ps.reduce((s,p)=>s+p[2],0)/b.ps.length);
+ return '<svg '+(key==='cuboid'?'class="cuboid-thumb" ':'')+'xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true">'+faces.map(f=>'<polygon points="'+f.ps.map(p=>[(32+(p[0]-cx)*scale).toFixed(2),(32+(p[1]-cy)*scale).toFixed(2)].join(',')).join(' ')+'" fill="'+f.color+'" stroke="#365476" stroke-width="1.3" stroke-linejoin="round"/>').join('')+'</svg>';
+}
+function drawGrid(){const keys=state.family==='poly'?ORDER:Object.keys(CURVED),grid=$('shapeGrid');grid.textContent='';for(const key of keys){const m=models[key]||CURVED[key],card=document.createElement('button');card.type='button';card.className='shape-card';card.innerHTML=modelThumbnail(key);const label=document.createElement('strong');label.textContent=m.name;card.append(label);card.addEventListener('click',()=>selectSolid(key));grid.append(card);}}
+function resetCamera(flat=false){const [rx,ry]=CAMERA[state.key];state.rx=flat?0:rx;state.ry=flat?0:ry;state.viewTween=null;}
+function stopSpin(){state.spin=false;$('spin').textContent='⟳ Rodar sozinho';$('spin').setAttribute('aria-pressed','false');}
+function syncFold(){slider.value=Math.round(state.open*100);$('percentage').textContent=Math.round(state.open*100)+'%';$('foldButton').textContent=state.open>.5?(CURVED[state.key]?'Fechar desenvolvimento':'Fechar sólido'):(CURVED[state.key]?'Ver desenvolvimento':'Abrir planificação');}
+function selectSolid(key){state.key=key;state.open=0;state.tween=null;state.transparent=false;syncTransparency();resetCamera();stopSpin();const m=models[key]||CURVED[key],c=compFor(key),isCurved=!!CURVED[key];$('solidTitle').textContent=m.name;$('solidFamily').textContent=isCurved?'Não poliedro':m.family==='pyramid'?'Poliedro · Pirâmide':'Poliedro · Prisma';$('faces').textContent=c.faces;$('edges').textContent=c.edges;$('vertices').textContent=c.vertices;$('facesLabel').textContent=isCurved?'Superfícies':'Faces';$('edgesLabel').textContent=isCurved?'Arestas curvas':'Arestas';$('bases').textContent=c.base;$('lateral').textContent=c.side;$('lateralLabel').textContent=isCurved?'Restante superfície':'Faces laterais';$('additionalInfo').textContent=descriptionFor(key);$('foldTitle').textContent=isCurved?'Desenvolvimento plano':'Planificação';$('foldNote').textContent=isCurved?'Observa como a superfície do sólido se abre para formar o seu desenvolvimento.':'Abre o sólido e observa como as faces estão ligadas.';
+$('foldUi').hidden=key==='sphere';$('noNet').hidden=key!=='sphere';syncFold();show('explore');}
+// Malhas de superfícies curvas: cada triângulo é desenhado com profundidade real em WebGL.
+function interp(a,b,t){return a.map((x,i)=>x*(1-t)+b[i]*t);}
+function curvedGeometry(key,open){const N=key==='sphere'?36:64, out=[];function triangle(a,b,c,color){out.push({points:[a,b,c],color,index:color,smooth:true});}
+ const r=1.02,h=2.28;
+ if(key==='cylinder'){
+  const L=2*Math.PI*r,bend=1-open;
+  for(let i=0;i<N;i++){
+   const a=i/N*2*Math.PI,b=(i+1)/N*2*Math.PI,s0=(i/N-.5)*L,s1=((i+1)/N-.5)*L;
+   let p,q,u,v;
+   if(bend<1e-4){
+    p=[s0,0,-h/2]; q=[s1,0,-h/2]; u=[s0,0,h/2]; v=[s1,0,h/2];
+   }else{
+    const R=r/bend,phi0=s0/R,phi1=s1/R;
+    const map=(phi,z)=>[R*Math.sin(phi),R*(1-Math.cos(phi))-r*bend,z];
+    p=map(phi0,-h/2); q=map(phi1,-h/2); u=map(phi0,h/2); v=map(phi1,h/2);
+   }
+   triangle(p,q,u,0); triangle(q,v,u,0);
+   for(const top of [false,true]){
+    const zc=top?h/2:-h/2, ca=[r*Math.cos(a),r*Math.sin(a),zc], cb=[r*Math.cos(b),r*Math.sin(b),zc], center=[0,0,zc];
+    const flatCenter=[0,0,top?(h/2+r*1.12):(-h/2-r*1.12)];
+    const circleA=[r*Math.cos(a),0,flatCenter[2]+r*Math.sin(a)], circleB=[r*Math.cos(b),0,flatCenter[2]+r*Math.sin(b)];
+    triangle(interp(center,flatCenter,open),interp(ca,circleA,open),interp(cb,circleB,open),top?1:2);
+   }
+  }
+  return out;
+ }
+ if(key==='cone'){
+  const slant=Math.hypot(r,h),sweep=2*Math.PI*r/slant;
+  for(let i=0;i<N;i++){const a=i/N*2*Math.PI,b=(i+1)/N*2*Math.PI,fa=Math.PI/2-sweep/2+i/N*sweep,fb=Math.PI/2-sweep/2+(i+1)/N*sweep;
+  triangle(interp([0,0,h],[0,0,0],open),interp([r*Math.cos(a),r*Math.sin(a),0],[slant*Math.cos(fa),slant*Math.sin(fa),0],open),interp([r*Math.cos(b),r*Math.sin(b),0],[slant*Math.cos(fb),slant*Math.sin(fb),0],open),0);
+  const flatCenter=[0,slant+r,0],center=[0,0,0];triangle(interp(center,flatCenter,open),interp([r*Math.cos(a),r*Math.sin(a),0],[r*Math.cos(a),slant+r+r*Math.sin(a),0],open),interp([r*Math.cos(b),r*Math.sin(b),0],[r*Math.cos(b),slant+r+r*Math.sin(b),0],open),1);
+  }return out;
+ }
+ const latitude=18;
+ for(let j=0;j<latitude;j++){const theta0=j/latitude*Math.PI,theta1=(j+1)/latitude*Math.PI;for(let i=0;i<N;i++){const phi0=i/N*2*Math.PI,phi1=(i+1)/N*2*Math.PI;const sp=(th,ph)=>[1.22*Math.sin(th)*Math.cos(ph),1.22*Math.sin(th)*Math.sin(ph),1.22*Math.cos(th)];const a=sp(theta0,phi0),b=sp(theta0,phi1),c=sp(theta1,phi0),d=sp(theta1,phi1);triangle(a,c,b,0);triangle(b,c,d,0);}}return out;
+}
+function glPoint(arr,p,color,n,d){arr.push(p[0],p[1],p[2]-d,...color,...n);}
+function render(){if(!gl||currentScreen!=='explore')return;const key=state.key,curved=!!CURVED[key],geo=curved?curvedGeometry(key,state.open):geometry(models[key],state.open);const wcss=canvas.clientWidth,hcss=canvas.clientHeight;if(wcss<2||hcss<2)return;
+ const dpr=Math.min(window.devicePixelRatio||1,2),w=Math.round(wcss*dpr),h=Math.round(hcss*dpr);if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
+ const pp=geo.flatMap(f=>f.points),min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity];for(const p of pp)for(let i=0;i<3;i++){min[i]=Math.min(min[i],p[i]);max[i]=Math.max(max[i],p[i]);}const centre=V.mid(min,max);
+ const transformed=geo.map(f=>{const points=f.points.map(p=>orbit(V.sub(p,centre),state.rx,state.ry)),normal=V.norm(V.cross(V.sub(points[1],points[0]),V.sub(points[2],points[0])));return{points,normal,index:f.index,smooth:f.smooth};});
+ let maxx=0,maxy=0,maxz=0;for(const f of transformed)for(const p of f.points){maxx=Math.max(maxx,Math.abs(p[0]));maxy=Math.max(maxy,Math.abs(p[1]));maxz=Math.max(maxz,Math.abs(p[2]));}
+ const aspect=w/h,fov=47*Math.PI/180,tan=Math.tan(fov/2),dist=Math.max(3.2,Math.max(maxx/(tan*aspect),maxy/tan)*1.30+maxz+.7);
+ const near=.06,far=100,f=1/tan,mat=new Float32Array([f/aspect,0,0,0,0,f,0,0,0,0,(far+near)/(near-far),-1,0,0,2*far*near/(near-far),0]);
+ gl.viewport(0,0,w,h);gl.clearColor(.973,.983,.999,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.useProgram(program);gl.uniformMatrix4fv(loc.projection,false,mat);
+ const fill=[],edges=[],edgeColor=[.16,.26,.38];const faceOrder=state.transparent?[...transformed].sort((a,b)=>a.points.reduce((sum,p)=>sum+p[2],0)/a.points.length-b.points.reduce((sum,p)=>sum+p[2],0)/b.points.length):transformed;for(const face of faceOrder){const pts=face.points,n=face.normal,c=PALETTES[key][face.index%PALETTES[key].length];for(let i=1;i<pts.length-1;i++)for(const v of[pts[0],pts[i],pts[i+1]])glPoint(fill,v,c,n,dist);if(!face.smooth)for(let i=0;i<pts.length;i++){glPoint(edges,pts[i],edgeColor,n,dist);glPoint(edges,pts[(i+1)%pts.length],edgeColor,n,dist);}}
+ const stride=9*4;function bind(buffer,coords){gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(coords),gl.DYNAMIC_DRAW);for(const [index,offset] of [[loc.position,0],[loc.color,12],[loc.normal,24]]){gl.enableVertexAttribArray(index);gl.vertexAttribPointer(index,3,gl.FLOAT,false,stride,offset);}}
+ if(state.transparent){gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);gl.disable(gl.DEPTH_TEST);gl.depthMask(false);}else{gl.disable(gl.BLEND);gl.enable(gl.DEPTH_TEST);gl.depthMask(true);}
+ gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(1,1);gl.uniform1f(loc.outline,0);gl.uniform1f(loc.alpha,state.transparent?.29:1);bind(posBuffer,fill);gl.drawArrays(gl.TRIANGLES,0,fill.length/9);gl.disable(gl.POLYGON_OFFSET_FILL);
+ if(edges.length){gl.uniform1f(loc.outline,1);gl.uniform1f(loc.alpha,state.transparent?.56:1);bind(lineBuffer,edges);gl.drawArrays(gl.LINES,0,edges.length/9);}
+ gl.depthMask(true);gl.enable(gl.DEPTH_TEST);gl.disable(gl.BLEND);
+}
+function orbitTo(rx,ry,duration=700){if(reduced){state.rx=rx;state.ry=ry;state.viewTween=null;}else state.viewTween={start:performance.now(),rx:state.rx,ry:state.ry,toRx:rx,toRy:ry,duration};}
+function foldTo(value){stopSpin();const[rx,ry]=CAMERA[state.key],openView=OPEN_CAMERA[state.key]||[0,0],target=value?openView:[rx,ry];orbitTo(target[0],target[1],800);if(reduced){state.open=value;state.tween=null;syncFold();}else state.tween={start:performance.now(),from:state.open,to:value};}
+$('foldButton').addEventListener('click',()=>foldTo(state.open>.5?0:1));
+slider.addEventListener('input',()=>{state.tween=null;state.open=+slider.value/100;syncFold();});
+function syncTransparency(){const b=$('transparent');b.setAttribute('aria-pressed',String(state.transparent));b.textContent=state.transparent?'◉ Opaco':'◐ Transparência';b.title=state.transparent?'Voltar a mostrar as superfícies opacas':'Mostrar através das superfícies';}
+ $('transparent').addEventListener('click',()=>{state.transparent=!state.transparent;syncTransparency();});
+ $('reset').addEventListener('click',()=>{stopSpin();resetCamera();});
+$('spin').addEventListener('click',()=>{state.spin=!state.spin;state.viewTween=null;$('spin').textContent=state.spin?'⏹ Parar rotação':'⟳ Rodar sozinho';$('spin').setAttribute('aria-pressed',String(state.spin));});
+
+const pointers=new Map();canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});stopSpin();state.viewTween=null;});
+canvas.addEventListener('pointermove',e=>{const p=pointers.get(e.pointerId);if(!p)return;if(pointers.size!==1)return;state.ry+=(e.clientX-p.x)*.011;state.rx+=(e.clientY-p.y)*.011;p.x=e.clientX;p.y=e.clientY;});
+for(const name of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(name,e=>pointers.delete(e.pointerId));
+canvas.addEventListener('keydown',e=>{const dir={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right'}[e.key];if(!dir)return;e.preventDefault();stopSpin();state.viewTween=null;if(dir==='up')state.rx-=.15;if(dir==='down')state.rx+=.15;if(dir==='left')state.ry-=.15;if(dir==='right')state.ry+=.15;});
+let last=0;function tick(t){const dt=Math.min(.06,(t-last)/1000||0);last=t;if(state.tween){const v=Math.min(1,(t-state.tween.start)/900),p=v*v*(3-2*v);state.open=state.tween.from+(state.tween.to-state.tween.from)*p;syncFold();if(v>=1)state.tween=null;}
+if(state.viewTween){const v=Math.min(1,(t-state.viewTween.start)/state.viewTween.duration),p=v*v*(3-2*v);state.rx=state.viewTween.rx+(state.viewTween.toRx-state.viewTween.rx)*p;state.ry=state.viewTween.ry+(state.viewTween.toRy-state.viewTween.ry)*p;if(v>=1)state.viewTween=null;}if(state.spin)state.ry+=dt*.6;render();requestAnimationFrame(tick);}
+for(const b of document.querySelectorAll('[data-go]'))b.addEventListener('click',()=>setFamily(b.dataset.go));
+const definitions={poly:'<strong>Poliedros:</strong> são sólidos geométricos limitados apenas por faces planas, com a forma de polígonos. Exemplos: cubo, prismas e pirâmides. As faces encontram-se nas arestas e as arestas nos vértices.',curved:'<strong>Não poliedros:</strong> são sólidos com pelo menos uma superfície curva. O cilindro e o cone têm bases circulares; a esfera tem uma superfície totalmente curva. Não têm apenas faces poligonais.'};
+for(const b of document.querySelectorAll('[data-info]'))b.addEventListener('click',()=>{const panel=$('definition'),same=!panel.hidden&&panel.dataset.kind===b.dataset.info;panel.hidden=same;panel.dataset.kind=b.dataset.info;if(!same)panel.innerHTML=definitions[b.dataset.info];for(const other of document.querySelectorAll('[data-info]'))other.setAttribute('aria-expanded',String(!same&&other===b));});
+$('backHome').addEventListener('click',()=>show('home'));
+$('backChoice').addEventListener('click',()=>{state.tween=null;stopSpin();show('choice');});
+window.__oficinaTest={models,geometry,posePoint,compFor,curvedGeometry,state,show,setFamily,selectSolid,render};
+show('home');requestAnimationFrame(tick);
+
+})();
+</script>
+
+<script>
+/* Funcionalidades PWA. A Oficina continua funcional mesmo sem instalação. */
+(()=>{
+  'use strict';
+  const installBtn=document.getElementById('installPwa');
+  let pendingInstall=null;
+  window.addEventListener('beforeinstallprompt', event=>{
+    event.preventDefault();pendingInstall=event;
+    if(installBtn)installBtn.hidden=false;
+  });
+  installBtn?.addEventListener('click',async()=>{
+    if(!pendingInstall)return;
+    const prompt=pendingInstall;pendingInstall=null;installBtn.hidden=true;
+    try{await prompt.prompt();}catch(e){console.warn('Não foi possível mostrar a instalação',e);}
+  });
+  window.addEventListener('appinstalled',()=>{pendingInstall=null;if(installBtn)installBtn.hidden=true;});
+  if('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost' || location.hostname==='127.0.0.1')){
+    window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js',{scope:'./'}).catch(error=>console.warn('A instalação offline não está disponível:',error)));
+  }
+})();
+</script>
+</body></html>

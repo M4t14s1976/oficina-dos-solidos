@@ -1,0 +1,40 @@
+{
+  "id": "./",
+  "name": "Oficina dos Sólidos — Matemática 4.º Ano",
+  "short_name": "Oficina dos Sólidos",
+  "description": "Explora sólidos geométricos em 3D, faces, arestas, vértices e planificações. Conceção e autoria: Marco Matias. Desenvolvido com ChatGPT (GPT-6, OpenAI).",
+  "lang": "pt-PT",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone"
+  ],
+  "background_color": "#f6f8fc",
+  "theme_color": "#2262c9",
+  "orientation": "any",
+  "categories": [
+    "education",
+    "kids"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
