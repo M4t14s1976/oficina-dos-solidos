@@ -1,5 +1,5 @@
 /* Oficina dos Sólidos — offline 1.0, 2026-10-25 */
-const CACHE="oficina-dos-solidos-v1.0-pwa-20261025-4";
+const CACHE="oficina-dos-solidos-v1.0-pwa-audit-20261025";
 const ASSETS=["./","./index.html","./manifest.webmanifest","./icons/favicon-64.png","./icons/icon-192.png","./icons/icon-512.png","./icons/icon-maskable-512.png","./icons/apple-touch-icon.png","./icons/oficina-logo.svg"];
 self.addEventListener("install",event=>{
  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));
