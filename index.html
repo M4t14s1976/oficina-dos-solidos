@@ -196,7 +196,7 @@ footer strong{color:#205a98}
 <path d="M66 48h24M78 36v24" stroke="#ef9c96" stroke-width="4" stroke-linecap="round"/>
 <circle cx="206" cy="218" r="8" fill="#68cbaa"/>
 </svg>
- <div class="screen-heading"><button class="back" id="backHome">← Voltar</button><div><h2 id="choiceTitle">Escolhe um sólido</h2><p id="choiceDesc">Toca numa figura para a explorar.</p></div></div>
+ <div class="screen-heading"><button class="back" id="backHome">← Voltar</button><div><h2 id="choiceTitle">Escolhe um sólido</h2><p id="choiceDesc">Seleciona uma figura para a explorar.</p></div></div>
  <div class="shape-grid" id="shapeGrid" aria-label="Sólidos da categoria escolhida"></div>
 </section>
 <section class="screen" id="explore" aria-labelledby="solidTitle" hidden>
@@ -204,8 +204,8 @@ footer strong{color:#205a98}
  <div class="explore-layout">
   <div class="viewer"><canvas id="scene" aria-label="Sólido tridimensional; arrasta com o rato para o rodar" tabindex="0"></canvas><div class="viewer-instruction">↔ Arrasta com o rato para rodar</div><div id="noGL" class="gl-error" role="alert">Não foi possível iniciar o WebGL. Experimenta abrir no Chrome ou Edge com aceleração gráfica ativa.</div></div>
   <aside class="side">
-   <section class="panel"><h3>Explorar o sólido</h3><p class="control-hint">Arrasta o sólido com o rato para observar todos os lados.</p><div class="nav-pad"><div class="nav-actions"><button class="btn" id="reset">↺ Vista inicial</button><button class="btn" id="spin" aria-pressed="false">⟳ Rodar sozinho</button><button class="btn" id="transparent" aria-pressed="false">◐ Transparência</button></div></div></section>
-   <section class="panel"><h3 id="foldTitle">Planificação</h3><div id="foldUi"><div class="foldrow"><button class="btn primary" id="foldButton">Abrir planificação</button></div><div class="slider-row"><input id="fold" type="range" min="0" max="100" value="0" aria-label="Grau de abertura da planificação"><output id="percentage">0%</output></div><p class="mini-note" id="foldNote">Abre o sólido e observa como as faces estão ligadas.</p></div><div class="nonnet" id="noNet" hidden>A esfera não tem uma planificação plana exata: uma superfície esférica não se consegue abrir num plano sem deformar.</div></section>
+   <section class="panel"><h3>Explorar o sólido</h3><p class="control-hint">Arrasta com o rato para observares o sólido de diferentes posições.</p><div class="nav-pad"><div class="nav-actions"><button class="btn" id="reset">↺ Vista inicial</button><button class="btn" id="spin" aria-pressed="false">⟳ Rodar sozinho</button><button class="btn" id="transparent" aria-pressed="false">◐ Transparência</button></div></div></section>
+   <section class="panel"><h3 id="foldTitle">Planificação</h3><div id="foldUi"><div class="foldrow"><button class="btn primary" id="foldButton">Abrir planificação</button></div><div class="slider-row"><input id="fold" type="range" min="0" max="100" value="0" aria-label="Grau de abertura da planificação"><output id="percentage">0%</output></div><p class="mini-note" id="foldNote">Abre o sólido e observa como as faces estão ligadas.</p></div><div class="nonnet" id="noNet" hidden>A esfera não tem uma planificação plana exata: a sua superfície não pode ser achatada sem ser deformada.</div></section>
    <section class="panel"><h3>Características</h3><div class="facts-grid"><div class="fact"><b id="faces">6</b><span id="facesLabel">Faces</span></div><div class="fact"><b id="edges">12</b><span id="edgesLabel">Arestas</span></div><div class="fact"><b id="vertices">8</b><span>Vértices</span></div></div><div class="composition"><div class="comp-tile"><b id="bases">2 quadrados</b><span>Bases</span></div><div class="comp-tile"><b id="lateral">4 quadrados</b><span id="lateralLabel">Faces laterais</span></div></div><p class="mini-note" id="additionalInfo"></p></section>
   </aside>
  </div>
@@ -229,15 +229,15 @@ function prismSource(n,label){const outline=polygon(n),height=(n===4?2.35:1.85),
  faces.push({ids:Array.from({length:n},(_,i)=>n-1-i),parent:0,hinge:[1,0]});
  faces.push({ids:Array.from({length:n},(_,i)=>i+n),parent:0,hinge:[n,n+1]});
  const kind={3:'triangulares',4:'quadradas',5:'pentagonais',6:'hexagonais'}[n];
- return{name:label,family:'prism',vertices,faces,colors:faces.map((_,i)=>PRISM_COLORS[i%PRISM_COLORS.length]),base:'2 bases '+kind,info:'Este prisma tem '+n+' faces laterais retangulares e duas bases '+kind+'. Abre-o para descobrir a sua planificação.'};}
+ return{name:label,family:'prism',vertices,faces,colors:faces.map((_,i)=>PRISM_COLORS[i%PRISM_COLORS.length]),base:'2 bases '+kind,info:n===4?'Este exemplo de prisma quadrangular tem duas bases quadradas e quatro faces laterais retangulares. Nem todos os prismas quadrangulares têm bases quadradas.':'Este prisma tem '+n+' faces laterais retangulares e duas bases '+kind+'. Abre-o para descobrir a sua planificação.'};}
 function pyramidSource(n,label){const outline=polygon(n),height=n===3?1.8:1.92,vertices=outline.map(([x,y])=>[x,y,0]).concat([[0,0,height]]);
  const faces=[{ids:Array.from({length:n},(_,i)=>n-1-i),parent:-1}];
  for(let i=0;i<n;i++)faces.push({ids:[i,(i+1)%n,n],parent:0,hinge:[i,(i+1)%n]});
  const baseName={3:'triangular',4:'quadrada',5:'pentagonal',6:'hexagonal',7:'heptagonal',8:'octogonal',10:'decagonal'}[n];
- return{name:label,family:'pyramid',vertices,faces,colors:faces.map((_,i)=>PYRAMID_COLORS[i%PYRAMID_COLORS.length]),base:'1 base '+baseName,info:'Esta pirâmide tem uma base '+baseName+' e '+n+' faces laterais triangulares que se encontram num vértice.'};}
+ return{name:label,family:'pyramid',vertices,faces,colors:faces.map((_,i)=>PYRAMID_COLORS[i%PYRAMID_COLORS.length]),base:'1 base '+baseName,info:'Esta pirâmide tem uma base '+baseName+' e '+n+' faces laterais triangulares que se encontram num vértice comum.'+(n===4?' Aqui a base é um quadrado, mas uma pirâmide quadrangular pode ter outra base de quatro lados.':'')};}
 const SOURCE={
- cube:boxSource('Cubo',2,2,2,'6 faces quadradas','O cubo também é um paralelepípedo retângulo e um prisma quadrangular. É um caso especial: todas as suas faces são quadradas e todas as arestas têm o mesmo comprimento.'),
- cuboid:boxSource('Paralelepípedo retângulo',3.35,1.48,2.05,'6 faces retangulares','O paralelepípedo retângulo é um prisma quadrangular com seis faces retangulares. O cubo é um caso especial em que todas essas faces são quadradas.'),
+ cube:boxSource('Cubo',2,2,2,'6 faces quadradas','O cubo é um caso especial de paralelepípedo retângulo e de prisma quadrangular. Tem seis faces quadradas, doze arestas com o mesmo comprimento e oito vértices.'),
+ cuboid:boxSource('Paralelepípedo retângulo',3.35,1.48,2.05,'6 faces retangulares','Este paralelepípedo retângulo tem seis faces retangulares, doze arestas e oito vértices. O cubo é um caso especial em que todas as faces são quadradas.'),
  prism3:prismSource(3,'Prisma triangular'),
  prism4:prismSource(4,'Prisma quadrangular'),
  prism5:prismSource(5,'Prisma pentagonal'),
@@ -277,9 +277,9 @@ posBuffer=gl.createBuffer();lineBuffer=gl.createBuffer();gl.enable(gl.DEPTH_TEST
 
 // Sólidos não poliedros (malhas triangulares), com planificação do cilindro e do cone.
 const CURVED={
- cylinder:{name:'Cilindro',family:'curved',kind:'cylinder',base:'2 círculos',side:'1 superfície lateral curva',faces:3,edges:2,vertices:0,description:'Tem duas bases circulares e uma superfície lateral curva. As duas arestas circulares são curvas.'},
- cone:{name:'Cone',family:'curved',kind:'cone',base:'1 círculo',side:'1 superfície lateral curva',faces:2,edges:1,vertices:1,description:'Tem uma base circular, uma superfície lateral curva e um vértice.'},
- sphere:{name:'Esfera',family:'curved',kind:'sphere',base:'Não tem',side:'1 superfície curva',faces:1,edges:0,vertices:0,description:'Não tem bases, arestas ou vértices. Toda a sua superfície é curva.'}
+ cylinder:{name:'Cilindro',family:'curved',kind:'cylinder',base:'2 círculos',side:'1 superfície lateral curva',faces:3,edges:2,vertices:0,description:'Tem duas bases em forma de círculo e uma superfície lateral curva. Os dois contornos circulares separam as bases da superfície lateral; não são arestas de um poliedro.'},
+ cone:{name:'Cone',family:'curved',kind:'cone',base:'1 círculo',side:'1 superfície lateral curva',faces:2,edges:1,vertices:1,description:'Tem uma base em forma de círculo, uma superfície lateral curva e uma ponta, chamada vértice. O contorno da base é circular; não é uma aresta de poliedro.'},
+ sphere:{name:'Esfera',family:'curved',kind:'sphere',base:'Não tem',side:'1 superfície curva',faces:1,edges:0,vertices:0,description:'Tem uma única superfície curva e contínua. Não tem bases, contornos circulares nem vértices.'}
 };
 const ALL_KEYS=[...ORDER,...Object.keys(CURVED)];
 const CURVED_COLORS={cylinder:['#4d92da','#7ebeea','#55ae9c'],cone:['#e8aa69','#75bdb4'],sphere:['#70a6dc','#94c3f1']};
@@ -314,7 +314,7 @@ function drawGrid(){const keys=state.family==='poly'?ORDER:Object.keys(CURVED),g
 function resetCamera(flat=false){const [rx,ry]=CAMERA[state.key];state.rx=flat?0:rx;state.ry=flat?0:ry;state.viewTween=null;}
 function stopSpin(){state.spin=false;$('spin').textContent='⟳ Rodar sozinho';$('spin').setAttribute('aria-pressed','false');}
 function syncFold(){slider.value=Math.round(state.open*100);$('percentage').textContent=Math.round(state.open*100)+'%';$('foldButton').textContent=state.open>.5?(CURVED[state.key]?'Fechar planificação':'Fechar sólido'):(CURVED[state.key]?'Ver planificação':'Abrir planificação');}
-function selectSolid(key){state.key=key;state.open=0;state.tween=null;state.transparent=false;syncTransparency();resetCamera();stopSpin();const m=models[key]||CURVED[key],c=compFor(key),isCurved=!!CURVED[key];$('solidTitle').textContent=m.name;$('solidFamily').textContent=isCurved?'Não poliedro':m.family==='pyramid'?'Poliedro · Pirâmide':key==='cube'?'Poliedro · Paralelepípedo (cubo)':key==='cuboid'?'Poliedro · Paralelepípedo retângulo':'Poliedro · Prisma';$('faces').textContent=c.faces;$('edges').textContent=c.edges;$('vertices').textContent=c.vertices;$('facesLabel').textContent=isCurved?'Superfícies':'Faces';$('edgesLabel').textContent=isCurved?'Arestas curvas':'Arestas';$('bases').textContent=c.base;$('lateral').textContent=c.side;$('lateralLabel').textContent=isCurved?'Restante superfície':'Faces laterais';$('additionalInfo').textContent=descriptionFor(key);$('foldTitle').textContent=isCurved?'Planificação':'Planificação';$('foldNote').textContent=isCurved?'Observa como a superfície do sólido se abre para formar a sua planificação.':'Abre o sólido e observa como as faces estão ligadas.';
+function selectSolid(key){state.key=key;state.open=0;state.tween=null;state.transparent=false;syncTransparency();resetCamera();stopSpin();const m=models[key]||CURVED[key],c=compFor(key),isCurved=!!CURVED[key];$('solidTitle').textContent=m.name;$('solidFamily').textContent=isCurved?'Não poliedro':m.family==='pyramid'?'Poliedro · Pirâmide':key==='cube'?'Poliedro · Cubo (paralelepípedo)':key==='cuboid'?'Poliedro · Paralelepípedo retângulo':'Poliedro · Prisma';$('faces').textContent=c.faces;$('edges').textContent=c.edges;$('vertices').textContent=c.vertices;$('facesLabel').textContent=isCurved?'Superfícies':'Faces';$('edgesLabel').textContent=isCurved?'Contornos circulares':'Arestas';$('bases').textContent=c.base;$('lateral').textContent=c.side;$('lateralLabel').textContent=isCurved?(key==='sphere'?'Superfície':'Superfície lateral'):'Faces laterais';$('additionalInfo').textContent=descriptionFor(key);$('foldTitle').textContent='Planificação';$('foldNote').textContent=key==='cylinder'?'A planificação contém um retângulo e dois círculos. A animação é uma representação visual simplificada.':key==='cone'?'A planificação contém um setor circular e um círculo. A animação é uma representação visual simplificada.':'Abre o sólido e observa como as faces continuam ligadas.';
 $('foldUi').hidden=key==='sphere';$('noNet').hidden=key!=='sphere';syncFold();show('explore');}
 // Malhas de superfícies curvas: cada triângulo é desenhado com profundidade real em WebGL.
 function interp(a,b,t){return a.map((x,i)=>x*(1-t)+b[i]*t);}
@@ -335,7 +335,7 @@ function curvedGeometry(key,open){const N=key==='sphere'?36:64, out=[];function 
    triangle(p,q,u,0); triangle(q,v,u,0);
    for(const top of [false,true]){
     const zc=top?h/2:-h/2, ca=[r*Math.cos(a),r*Math.sin(a),zc], cb=[r*Math.cos(b),r*Math.sin(b),zc], center=[0,0,zc];
-    const flatCenter=[0,0,top?(h/2+r*1.12):(-h/2-r*1.12)];
+    const flatCenter=[0,0,top?(h/2+r):(-h/2-r)];
     const circleA=[r*Math.cos(a),0,flatCenter[2]+r*Math.sin(a)], circleB=[r*Math.cos(b),0,flatCenter[2]+r*Math.sin(b)];
     triangle(interp(center,flatCenter,open),interp(ca,circleA,open),interp(cb,circleB,open),top?1:2);
    }
@@ -384,7 +384,7 @@ canvas.addEventListener('keydown',e=>{const dir={ArrowUp:'up',ArrowDown:'down',A
 let last=0;function tick(t){const dt=Math.min(.06,(t-last)/1000||0);last=t;if(state.tween){const v=Math.min(1,(t-state.tween.start)/900),p=v*v*(3-2*v);state.open=state.tween.from+(state.tween.to-state.tween.from)*p;syncFold();if(v>=1)state.tween=null;}
 if(state.viewTween){const v=Math.min(1,(t-state.viewTween.start)/state.viewTween.duration),p=v*v*(3-2*v);state.rx=state.viewTween.rx+(state.viewTween.toRx-state.viewTween.rx)*p;state.ry=state.viewTween.ry+(state.viewTween.toRy-state.viewTween.ry)*p;if(v>=1)state.viewTween=null;}if(state.spin)state.ry+=dt*.6;render();requestAnimationFrame(tick);}
 for(const b of document.querySelectorAll('[data-go]'))b.addEventListener('click',()=>setFamily(b.dataset.go));
-const definitions={poly:'<strong>Poliedros:</strong> são sólidos geométricos limitados apenas por faces planas, com a forma de polígonos. Exemplos: cubo (um tipo especial de paralelepípedo), outros prismas e pirâmides. As faces encontram-se nas arestas e as arestas nos vértices.',curved:'<strong>Não poliedros:</strong> são sólidos com pelo menos uma superfície curva. O cilindro e o cone têm bases circulares; a esfera tem uma superfície totalmente curva. Não têm apenas faces poligonais.'};
+const definitions={poly:'<strong>Poliedros:</strong> são sólidos geométricos limitados por faces planas que são polígonos. As <strong>arestas</strong> são segmentos de reta onde se encontram duas faces; os <strong>vértices</strong> são pontos onde se encontram arestas. Exemplos: prismas e pirâmides. O cubo é também um paralelepípedo retângulo.',curved:'<strong>Não poliedros:</strong> são sólidos com pelo menos uma superfície curva. O cilindro tem duas bases circulares; o cone tem uma base circular e um vértice; a esfera não tem bases nem vértices. Os seus contornos circulares não são arestas de poliedros.'};
 for(const b of document.querySelectorAll('[data-info]'))b.addEventListener('click',()=>{const panel=$('definition'),same=!panel.hidden&&panel.dataset.kind===b.dataset.info;panel.hidden=same;panel.dataset.kind=b.dataset.info;if(!same)panel.innerHTML=definitions[b.dataset.info];for(const other of document.querySelectorAll('[data-info]'))other.setAttribute('aria-expanded',String(!same&&other===b));});
 $('backHome').addEventListener('click',()=>show('home'));
 $('backChoice').addEventListener('click',()=>{state.tween=null;stopSpin();show('choice');});
